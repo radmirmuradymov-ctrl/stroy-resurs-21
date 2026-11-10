@@ -1,0 +1,1 @@
+import"./hoisted.BgX5sCxR.js";document.querySelectorAll(".tariff-pick").forEach(e=>e.addEventListener("click",()=>window.dispatchEvent(new CustomEvent("sr21:select-item",{detail:{type:"service",id:e.getAttribute("data-service-id")}}))));
