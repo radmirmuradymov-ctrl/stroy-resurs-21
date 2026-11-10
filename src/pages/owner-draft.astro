@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  SITE_CONFIG,
+  MATERIALS,
+  SERVICES,
+  DELIVERY_ZONES,
+  VEHICLES,
+} from '../data/siteConfig';
+---
+
+<BaseLayout
+  title={`Черновик владельца и сводка прайса | ${SITE_CONFIG.companyName}`}
+  currentPath="/owner-draft"
+  noindex
+>
+  <section class="w-full py-10 lg:py-14">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 flex flex-col gap-8">
+      <!-- Шапка кабинета-черновика -->
+      <div class="bg-primary text-on-primary p-6 sm:p-8 border-b-4 border-secondary-container">
+        <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary-fixed font-bold">
+          Служебная страница для согласования с заказчиком
+        </span>
+        <h1 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl uppercase font-bold mt-1">
+          Панель-черновик сайта «Строй Ресурс 21 Чувашия»
+        </h1>
+        <p class="font-body-lg text-body-lg text-primary-fixed max-w-3xl mt-2">
+          Все цены, телефоны, зоны доставки и карточки техники вынесены в единый конфигурационный файл
+          <code class="bg-primary-dark px-2 py-0.5 text-secondary-fixed font-mono">src/data/siteConfig.ts</code>.
+          Ниже собрана вся таблица текущих настроек и список вопросов для быстрого запуска сайта.
+        </p>
+      </div>
+
+      <!-- Блок 1: Что нужно подтвердить у владельца перед запуском -->
+      <div class="bg-surface-container-lowest border-2 border-primary p-6">
+        <h2 class="font-headline-lg text-headline-md uppercase text-primary font-bold mb-4">
+          Чек-лист уточнений у владельца (5 минут по телефону или в ВК)
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-body-md text-body-md">
+          <div class="bg-surface p-4 border-l-4 border-secondary-container">
+            <strong class="font-headline-sm text-headline-sm uppercase text-primary block">
+              Точный адрес базы и офиса
+            </strong>
+            <p class="text-body-sm text-on-surface-variant mt-1">
+              В справочниках указаны: ул. Кирова 17Б (оф. 197), Дорожный проезд 6к1, Ярославская ул. и площадка «в 500 м от аэропорта». Какой адрес ставим в шапку и подвал?
+            </p>
+          </div>
+
+          <div class="bg-surface p-4 border-l-4 border-secondary-container">
+            <strong class="font-headline-sm text-headline-sm uppercase text-primary block">
+              Актуальный прайс на сезон
+            </strong>
+            <p class="text-body-sm text-on-surface-variant mt-1">
+              Сверить минимальные цены «от ... ₽» за тонну, куб и мешок (песок, щебень, ОПГС, чернозём, торф, перегной, дрова), а также минималку за рейс по Чебоксарам и НЧК.
+            </p>
+          </div>
+
+          <div class="bg-surface p-4 border-l-4 border-primary">
+            <strong class="font-headline-sm text-headline-sm uppercase text-primary block">
+              Куда принимать заявки с калькулятора
+            </strong>
+            <p class="text-body-sm text-on-surface-variant mt-1">
+              Сейчас заявки формируют готовое сообщение со сметой на номер <strong>{SITE_CONFIG.phones.main}</strong> (WhatsApp / звонок) и ведут в Telegram <strong>{SITE_CONFIG.socials.telegramHandle}</strong>.
+            </p>
+          </div>
+
+          <div class="bg-surface p-4 border-l-4 border-tertiary">
+            <strong class="font-headline-sm text-headline-sm uppercase text-primary block">
+              Домен stroyresurs21.ru
+            </strong>
+            <p class="text-body-sm text-on-surface-variant mt-1">
+              Старый домен из группы ВК сейчас не продлён. Можно перепривязать его или подключить новый домен за 15 минут.
+            </p>
+          </div>
+
+          <div class="bg-surface p-4 border-l-4 border-secondary-container">
+            <strong class="font-headline-sm text-headline-sm uppercase text-primary block">
+              Фото техники и материалов
+            </strong>
+            <p class="text-body-sm text-on-surface-variant mt-1">
+              Сейчас на сайте подписанные схемы машин и фактуры материалов (<code>public/images/*.svg</code>). Нужны реальные фото из альбомов ВК «Наша техника» и «Наши услуги» — заменим пути в <code>siteConfig.ts</code>. Также подтвердите WhatsApp на номере {SITE_CONFIG.phones.main}.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Блок 2: Сводная таблица материалов и цен -->
+      <div class="bg-surface-container-lowest border-2 border-surface-variant p-6">
+        <h2 class="font-headline-lg text-headline-md uppercase text-primary font-bold mb-4">
+          Текущий прайс материалов в калькуляторе (демо-значения)
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-primary text-on-primary font-label-technical text-label-technical uppercase">
+                <th class="py-3 px-4">Позиция</th>
+                <th class="py-3 px-4">Категория</th>
+                <th class="py-3 px-4 text-right">Цена / т</th>
+                <th class="py-3 px-4 text-right">Цена / м³</th>
+                <th class="py-3 px-4 text-right">Мешок</th>
+                <th class="py-3 px-4 text-right">Плотность</th>
+                <th class="py-3 px-4">Страница SEO</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-variant font-body-sm text-body-sm tabular-nums">
+              {MATERIALS.map((m) => (
+                <tr class="hover:bg-surface">
+                  <td class="py-3 px-4 font-bold text-primary">{m.name}</td>
+                  <td class="py-3 px-4">{m.categoryLabel}</td>
+                  <td class="py-3 px-4 text-right font-bold">{m.pricePerTon ? `${m.pricePerTon} ₽` : '—'}</td>
+                  <td class="py-3 px-4 text-right font-bold">{m.pricePerM3 ? `${m.pricePerM3} ₽` : '—'}</td>
+                  <td class="py-3 px-4 text-right font-bold text-secondary-container">{m.pricePerBag} ₽</td>
+                  <td class="py-3 px-4 text-right">{m.bulkDensity} т/м³</td>
+                  <td class="py-3 px-4">
+                    <a href={`/materialy/${m.slug}`} class="text-primary underline hover:text-secondary-container">
+                      /materialy/{m.slug}
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Блок 3: Сводная таблица услуг -->
+      <div class="bg-surface-container-lowest border-2 border-surface-variant p-6">
+        <h2 class="font-headline-lg text-headline-md uppercase text-primary font-bold mb-4">
+          Страницы услуг и спецтехники
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {SERVICES.map((s) => (
+            <div class="bg-surface p-4 border border-surface-variant flex flex-col justify-between">
+              <div>
+                <span class="font-label-technical text-label-technical uppercase text-secondary font-bold">
+                  {s.badge}
+                </span>
+                <h3 class="font-headline-sm text-headline-sm uppercase text-primary font-bold mt-1">
+                  {s.shortName}
+                </h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                  Тариф: от {s.priceFrom.toLocaleString('ru-RU')} ₽/{s.unitLabel}
+                </p>
+              </div>
+              <a
+                href={`/uslugi/${s.slug}`}
+                class="mt-3 pt-2 border-t border-surface-variant font-label-technical text-label-technical uppercase text-primary hover:underline font-bold"
+              >
+                Открыть /uslugi/{s.slug} →
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,867 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DeliveryCalculator from '../components/DeliveryCalculator';
+import {
+  SITE_CONFIG,
+  MATERIALS,
+  SERVICES,
+  VEHICLES,
+  DELIVERY_ZONES,
+  MAIN_FAQ,
+} from '../data/siteConfig';
+import { basePrice } from '../utils/calculator';
+
+const priceOf = (id: string) => {
+  const m = MATERIALS.find((x) => x.id === id)!;
+  const p = basePrice(m);
+  return `${p.value.toLocaleString('ru-RU')} ₽/${p.unit}`;
+};
+const minService = (id: string) => SERVICES.find((x) => x.id === id)!.priceFrom.toLocaleString('ru-RU');
+---
+
+<BaseLayout
+  title="Строй Ресурс 21 Чувашия — Доставка стройматериалов от 500 кг до 20 т, самосвалы, манипулятор, вывоз мусора в Чебоксарах"
+  currentPath="/"
+>
+  <!-- 1. ПЕРВЫЙ ЭКРАН (INDUSTRIAL SPLIT HERO) -->
+  <section class="w-full bg-surface-container-lowest border-b-2 border-surface-variant">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 py-8 lg:py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <!-- Левая колонка: Оффер, 3 факта, цены и кнопки -->
+        <div class="lg:col-span-7 flex flex-col gap-5">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary text-on-primary font-label-technical text-label-technical uppercase tracking-wider">
+              <span class="w-2 h-2 bg-secondary-container inline-block"></span>
+              Чебоксары • Новочебоксарск • Пригород
+            </span>
+            <span class="inline-flex items-center px-2.5 py-1 bg-surface-container text-primary font-label-technical text-label-technical uppercase tracking-wider border border-surface-variant">
+              Работаем ежедневно без выходных
+            </span>
+          </div>
+
+          <h1 class="font-display text-display-mobile lg:text-display text-primary uppercase font-bold leading-none tracking-tight">
+            Привезём стройматериалы, вывезем мусор — <span class="text-secondary-container">сегодня же</span>
+          </h1>
+
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+            Доставка сыпучих и штучных материалов для стройки, сада и печи одной машиной. Свой парк самосвалов (ГАЗ, ЗИЛ, КамАЗ, МАЗ), Газель, манипулятор и бригада грузчиков.
+          </p>
+
+          <!-- Три ключевых отличия от конкурентов -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div class="bg-surface p-3 border-l-4 border-primary">
+              <span class="font-label-technical text-label-technical uppercase text-on-surface-variant block">
+                Любой объём
+              </span>
+              <span class="font-headline-sm text-headline-sm uppercase text-primary font-bold">
+                От 500 кг до 20 тонн
+              </span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant block mt-0.5">
+                Не нужно переплачивать за целый самосвал
+              </span>
+            </div>
+
+            <div class="bg-surface p-3 border-l-4 border-secondary-container">
+              <span class="font-label-technical text-label-technical uppercase text-on-surface-variant block">
+                Удобная фасовка
+              </span>
+              <span class="font-headline-sm text-headline-sm uppercase text-primary font-bold">
+                В мешках и россыпью
+              </span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant block mt-0.5">
+                Мешки по 40–50 кг или самосвальный свал
+              </span>
+            </div>
+
+            <div class="bg-surface p-3 border-l-4 border-tertiary">
+              <span class="font-label-technical text-label-technical uppercase text-on-surface-variant block">
+                Под ключ со своей техникой
+              </span>
+              <span class="font-headline-sm text-headline-sm uppercase text-primary font-bold">
+                Разгрузим и вывезем
+              </span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant block mt-0.5">
+                Свои грузчики, манипулятор и спецполигон
+              </span>
+            </div>
+          </div>
+
+          <!-- Ценовой ориентир на первом экране -->
+          <div class="p-3.5 bg-surface-container border border-primary/30 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-label-lg text-label-lg font-bold uppercase text-primary tabular-nums">
+              <span>Песок от {priceOf('pesok-rechnoy')}</span>
+              <span class="text-outline" aria-hidden="true">•</span>
+              <span>Чернозём от {priceOf('chernozem-grunt')}</span>
+              <span class="text-outline" aria-hidden="true">•</span>
+              <span>Вывоз мусора от {minService('vyvoz-musora')} ₽</span>
+              <span class="text-outline" aria-hidden="true">•</span>
+              <span>Грузчики от {minService('gruzchiki')} ₽/ч</span>
+            </div>
+            {SITE_CONFIG.isDemoPrices && (
+              <span class="font-label-technical text-label-technical bg-secondary-fixed text-on-secondary-fixed px-2 py-1 uppercase">
+                Цены — ориентир, уточняются
+              </span>
+            )}
+          </div>
+
+          <!-- Главные действия -->
+          <div class="flex flex-wrap items-center gap-3 pt-1">
+            <a
+              href={`tel:${SITE_CONFIG.phones.mainRaw}`}
+              class="min-h-[48px] inline-flex items-center justify-center bg-secondary-container hover:bg-secondary-hover active:translate-y-0.5 text-on-secondary px-6 py-3 font-label-lg text-label-lg uppercase tracking-wider font-bold transition-all tabular-nums"
+            >
+              Позвонить: {SITE_CONFIG.phones.main}
+            </a>
+            <a
+              href="#section-calculator"
+              class="min-h-[48px] inline-flex items-center justify-center bg-primary hover:bg-primary-dark text-on-primary px-6 py-3 font-label-lg text-label-lg uppercase tracking-wider font-bold transition-colors"
+            >
+              Рассчитать с доставкой
+            </a>
+          </div>
+        </div>
+
+        <!-- Правая колонка: Фото рабочей машины и карточка оперативной сводки -->
+        <div class="lg:col-span-5">
+          <div class="bg-surface-container-lowest p-3 border-2 border-primary">
+            <div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-variant">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 bg-secondary-container inline-block"></span>
+                <span class="font-label-technical text-label-technical uppercase tracking-wider font-bold text-primary">
+                  Своя техника в Чебоксарах
+                </span>
+              </div>
+              <span class="font-label-technical text-label-technical text-on-surface-variant uppercase font-bold">
+                Без посредников
+              </span>
+            </div>
+
+            <div class="w-full aspect-[8/5] bg-surface-dim overflow-hidden">
+              <img
+                src="/images/kamaz.svg"
+                alt="Схема: самосвал КамАЗ / МАЗ грузоподъёмностью 10–20 т"
+                width="800"
+                height="500"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <div class="bg-primary-dark text-on-primary px-3 py-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 font-label-technical text-label-technical uppercase">
+                <span>ГАЗ • ЗИЛ • КамАЗ • МАЗ • Манипулятор</span>
+                <span class="text-secondary-fixed">Схема · фото из ВК позже</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 pt-3 mt-2 border-t border-surface-variant text-center">
+              <div class="bg-surface p-2">
+                <span class="font-label-technical text-label-technical text-on-surface-variant uppercase block">
+                  Мин. заказ
+                </span>
+                <span class="font-tabular-price text-headline-sm text-primary font-bold tabular-nums">
+                  от 500 кг
+                </span>
+              </div>
+              <div class="bg-surface p-2">
+                <span class="font-label-technical text-label-technical text-on-surface-variant uppercase block">
+                  Самосвалы
+                </span>
+                <span class="font-tabular-price text-headline-sm text-primary font-bold tabular-nums">
+                  5 – 20 т
+                </span>
+              </div>
+              <div class="bg-surface p-2">
+                <span class="font-label-technical text-label-technical text-on-surface-variant uppercase block">
+                  Подача
+                </span>
+                <span class="font-tabular-price text-headline-sm text-secondary font-bold">
+                  Сегодня
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. ПЕРЕКЛЮЧАТЕЛЬ: НУЖНО ПРИВЕЗТИ / НУЖНО ВЫВЕЗТИ ИЛИ ПЕРЕВЕЗТИ -->
+  <section class="w-full bg-surface border-b-2 border-surface-variant py-8">
+    <div class="max-w-7xl mx-auto px-4 md:px-10">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+          <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary font-bold">
+            Два равных направления работы
+          </span>
+          <h2 class="font-headline-lg text-headline-xl-mobile md:text-headline-lg uppercase text-primary font-bold">
+            Что нужно сделать на вашем объекте?
+          </h2>
+        </div>
+
+        <div class="inline-flex p-1 bg-surface-container-lowest border-2 border-primary" role="group" aria-label="Что нужно сделать">
+          <button
+            type="button"
+            id="switch-tab-bring"
+            aria-pressed="true"
+            class="min-h-[44px] px-4 py-2 bg-primary text-on-primary font-label-lg text-label-lg uppercase font-bold tracking-wider transition-colors"
+          >
+            Нужно привезти материалы
+          </button>
+          <button
+            type="button"
+            id="switch-tab-remove"
+            aria-pressed="false"
+            class="min-h-[44px] px-4 py-2 bg-transparent text-primary hover:bg-surface-container font-label-lg text-label-lg uppercase font-bold tracking-wider transition-colors"
+          >
+            Вывезти мусор / Спецтехника
+          </button>
+        </div>
+      </div>
+
+      <!-- Вкладка 1: Плитки направлений материалов -->
+      <div id="panel-bring" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a
+          href="#section-materials"
+          data-filter-target="stroyka"
+          class="branch-tile bg-surface-container-lowest border-2 border-surface-variant hover:border-primary p-5 flex flex-col justify-between transition-colors"
+        >
+          <div>
+            <h3 class="font-headline-md text-headline-md uppercase text-primary font-bold">
+              Для стройки и бетона
+            </h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-1">
+              Песок речной и карьерный, щебень (гранитный, известняковый, доменный), ОПГС, ПГС, гравмасса, бой кирпича, асфальтная крошка, керамзит, цемент, блоки и кирпич М100–М150.
+            </p>
+          </div>
+          <span class="mt-4 pt-3 border-t border-surface-variant font-label-technical text-label-technical uppercase text-secondary font-bold">
+            Смотреть цены для стройки →
+          </span>
+        </a>
+
+        <a
+          href="#section-materials"
+          data-filter-target="sad"
+          class="branch-tile bg-surface-container-lowest border-2 border-surface-variant hover:border-primary p-5 flex flex-col justify-between transition-colors"
+        >
+          <div>
+            <h3 class="font-headline-md text-headline-md uppercase text-primary font-bold">
+              Для сада, теплиц и огорода
+            </h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-1">
+              Чернозём местный и батыревский (без глины и корней), торф низовой, верховой и заволжский, навоз-перегной (конский, коровий, птичий, 1.5 года), плодородная земля и опилки.
+            </p>
+          </div>
+          <span class="mt-4 pt-3 border-t border-surface-variant font-label-technical text-label-technical uppercase text-secondary font-bold">
+            Смотреть грунты и удобрения →
+          </span>
+        </a>
+
+        <a
+          href="#section-materials"
+          data-filter-target="pech"
+          class="branch-tile bg-surface-container-lowest border-2 border-surface-variant hover:border-primary p-5 flex flex-col justify-between transition-colors"
+        >
+          <div>
+            <h3 class="font-headline-md text-headline-md uppercase text-primary font-bold">
+              Для печи, бани и котла
+            </h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-1">
+              Дрова берёзовые и дубовые колотые, горбыль, срезка берёзы, каменный уголь и пиломатериалы. Доставка от 1 до 15 м³ за рейс.
+            </p>
+          </div>
+          <span class="mt-4 pt-3 border-t border-surface-variant font-label-technical text-label-technical uppercase text-secondary font-bold">
+            Смотреть дрова и уголь →
+          </span>
+        </a>
+      </div>
+
+      <!-- Вкладка 2: Плитки услуг (Вывоз мусора / Манипулятор / Самосвал / Грузчики) -->
+      <div id="panel-remove" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {SERVICES.map((srv) => (
+          <a
+            href={`/uslugi/${srv.slug}`}
+            class="bg-surface-container-lowest border-2 border-primary p-5 flex flex-col justify-between hover:bg-surface-container transition-colors"
+          >
+            <div>
+              <span class="font-label-technical text-label-technical uppercase bg-secondary-fixed text-on-secondary-fixed px-2 py-0.5 font-bold">
+                {srv.badge}
+              </span>
+              <h3 class="font-headline-sm text-headline-sm uppercase text-primary font-bold mt-2">
+                {srv.shortName}
+              </h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                {srv.description}
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-surface-variant flex items-baseline justify-between">
+              <span class="font-tabular-price text-tabular-price text-secondary-container font-bold tabular-nums">
+                от {srv.priceFrom.toLocaleString('ru-RU')} ₽/{srv.unitLabel}
+              </span>
+              <span class="font-label-technical text-label-technical uppercase text-primary font-bold">
+                Подробнее →
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. КАТАЛОГ МАТЕРИАЛОВ С ЦЕНАМИ -->
+  <section class="w-full bg-surface-container-lowest py-10 lg:py-14" id="section-materials">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 flex flex-col gap-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b-2 border-surface-variant pb-4">
+        <div>
+          <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary font-bold">
+            Прайс-витрина материалов
+          </span>
+          <h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl uppercase text-primary font-bold">
+            Каталог стройматериалов, грунтов и дров
+          </h2>
+        </div>
+
+        <!-- Фильтр-табы по 3 направлениям -->
+        <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Фильтр категорий материалов">
+          <button
+            type="button"
+            data-cat-filter="all"
+            aria-pressed="true"
+            class="cat-pill min-h-[44px] px-3.5 py-2 bg-primary text-on-primary font-label-technical text-label-technical uppercase tracking-wider font-bold"
+          >
+            Все позиции ({MATERIALS.length})
+          </button>
+          <button
+            type="button"
+            data-cat-filter="stroyka"
+            aria-pressed="false"
+            class="cat-pill min-h-[44px] px-3.5 py-2 bg-surface text-on-surface hover:bg-surface-container font-label-technical text-label-technical uppercase tracking-wider font-bold border border-surface-variant"
+          >
+            Для стройки
+          </button>
+          <button
+            type="button"
+            data-cat-filter="sad"
+            aria-pressed="false"
+            class="cat-pill min-h-[44px] px-3.5 py-2 bg-surface text-on-surface hover:bg-surface-container font-label-technical text-label-technical uppercase tracking-wider font-bold border border-surface-variant"
+          >
+            Для сада и огорода
+          </button>
+          <button
+            type="button"
+            data-cat-filter="pech"
+            aria-pressed="false"
+            class="cat-pill min-h-[44px] px-3.5 py-2 bg-surface text-on-surface hover:bg-surface-container font-label-technical text-label-technical uppercase tracking-wider font-bold border border-surface-variant"
+          >
+            Для печи и бани
+          </button>
+        </div>
+      </div>
+
+      <!-- Сетка карточек материалов -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="materials-grid">
+        {MATERIALS.map((mat) => (
+          <article
+            data-category={mat.category}
+            class="material-card bg-surface-container-lowest border-2 border-surface-variant hover:border-primary flex flex-col justify-between transition-colors"
+          >
+            <div>
+              <a href={`/materialy/${mat.slug}`} class="block relative w-full aspect-[16/10] bg-surface-dim overflow-hidden border-b border-surface-variant">
+                <img
+                  src={mat.image}
+                  alt={mat.imageAlt}
+                  loading="lazy"
+                  width="480"
+                  height="300"
+                  class="w-full h-full object-cover"
+                />
+                <span class="absolute top-2 left-2 bg-primary text-on-primary px-2.5 py-1 font-label-technical text-label-technical uppercase font-bold">
+                  {mat.categoryLabel}
+                </span>
+                <span class="absolute bottom-2 right-2 bg-surface-container-lowest/95 text-on-surface px-2 py-0.5 font-label-technical text-label-technical uppercase border border-surface-variant">
+                  {mat.badge}
+                </span>
+              </a>
+
+              <div class="p-5 flex flex-col gap-3">
+                <h3 class="font-headline-md text-headline-sm sm:text-headline-md text-primary uppercase font-bold">
+                  <a href={`/materialy/${mat.slug}`} class="hover:underline">
+                    {mat.name}
+                  </a>
+                </h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">
+                  {mat.description}
+                </p>
+
+                <!-- Спецификации -->
+                <div class="bg-surface p-3 flex flex-col gap-1.5 border border-surface-variant">
+                  {mat.specs.map((sp) => (
+                    <div class="flex justify-between gap-2 font-label-technical text-label-technical">
+                      <span class="text-on-surface-variant">{sp.label}:</span>
+                      <span class="font-bold text-on-surface text-right">{sp.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div class="p-5 pt-0 flex flex-col gap-3">
+              <div class="flex items-baseline justify-between border-t border-surface-variant pt-3 tabular-nums">
+                <div>
+                  <span class="font-label-technical text-label-technical uppercase text-on-surface-variant block">
+                    Россыпью / Самосвал
+                  </span>
+                  <span class="font-tabular-price text-tabular-price font-bold text-secondary-container">
+                    от {basePrice(mat).value.toLocaleString('ru-RU')} ₽
+                    <span class="text-body-sm font-normal text-on-surface-variant">
+                      /{basePrice(mat).unit}
+                    </span>
+                  </span>
+                </div>
+                <div class="text-right">
+                  <span class="font-label-technical text-label-technical uppercase text-on-surface-variant block">
+                    В мешках
+                  </span>
+                  <span class="font-headline-sm text-headline-sm font-bold text-primary">
+                    от {mat.pricePerBag} ₽/меш.
+                  </span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  data-order-type="material"
+                  data-order-id={mat.id}
+                  class="order-trigger-btn min-h-[44px] bg-secondary-container hover:bg-secondary-hover active:translate-y-px text-on-secondary px-3 py-2 font-label-technical text-label-technical uppercase font-bold tracking-wider transition-colors"
+                >
+                  Заказать
+                </button>
+                <a
+                  href={`/materialy/${mat.slug}`}
+                  class="min-h-[44px] inline-flex items-center justify-center bg-surface hover:bg-surface-container border border-primary text-primary px-3 py-2 font-label-technical text-label-technical uppercase font-bold tracking-wider transition-colors"
+                >
+                  Подробнее
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. УСЛУГИ СПЕЦТЕХНИКИ, ВЫВОЗ МУСОРА И ГРУЗЧИКИ (РАВНОЕ НАПРАВЛЕНИЕ) -->
+  <section class="w-full bg-surface py-10 lg:py-14 border-t-2 border-b-2 border-surface-variant" id="section-services">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 flex flex-col gap-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary font-bold">
+            Услуги спецтехники и рабочих бригад
+          </span>
+          <h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl uppercase text-primary font-bold">
+            Вывоз строительного мусора, манипулятор, самосвалы и грузчики
+          </h2>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+          Сами вынесем строительный мусор с этажа, погрузим и увезём строго на спецполигон. Перевезём грузы манипулятором по Чебоксарам и всей Чувашии.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+        {SERVICES.map((srv) => (
+          <article class="bg-surface-container-lowest border-2 border-primary flex flex-col overflow-hidden">
+            <a href={`/uslugi/${srv.slug}`} class="relative block aspect-[8/5] bg-surface-dim border-b border-surface-variant">
+              <img
+                src={srv.image}
+                alt={srv.imageAlt}
+                loading="lazy"
+                width="800"
+                height="500"
+                class="w-full h-full object-cover"
+              />
+              <span class="absolute top-2 left-2 bg-primary-dark text-on-primary px-2 py-0.5 font-label-technical text-label-technical uppercase">
+                {srv.badge}
+              </span>
+            </a>
+
+            <div class="p-5 flex flex-col justify-between flex-1 gap-4">
+              <div>
+                <h3 class="font-headline-md text-headline-sm sm:text-headline-md uppercase text-primary font-bold">
+                  <a href={`/uslugi/${srv.slug}`} class="hover:underline">
+                    {srv.name}
+                  </a>
+                </h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5">
+                  {srv.description}
+                </p>
+                <ul class="mt-3 pt-2 border-t border-surface-variant flex flex-col gap-1 font-label-technical text-label-technical text-on-surface">
+                  {srv.bullets.map((b) => (
+                    <li class="flex items-start gap-1.5">
+                      <span class="text-secondary font-bold" aria-hidden="true">—</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div class="pt-3 border-t border-surface-variant flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <span class="font-label-technical text-label-technical uppercase text-on-surface-variant block">
+                    Тариф
+                  </span>
+                  <span class="font-tabular-price text-tabular-price font-bold text-secondary-container tabular-nums">
+                    от {srv.priceFrom.toLocaleString('ru-RU')} ₽
+                    <span class="text-body-sm font-normal text-on-surface-variant">/{srv.unitLabel}</span>
+                  </span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    data-order-type="service"
+                    data-order-id={srv.id}
+                    class="order-trigger-btn min-h-[44px] bg-secondary-container hover:bg-secondary-hover active:translate-y-px text-on-secondary px-4 py-2 font-label-technical text-label-technical uppercase font-bold tracking-wider transition-colors"
+                  >
+                    Вызвать
+                  </button>
+                  <a
+                    href={`/uslugi/${srv.slug}`}
+                    class="min-h-[44px] inline-flex items-center justify-center bg-primary hover:bg-primary-dark text-on-primary px-3.5 py-2 font-label-technical text-label-technical uppercase font-bold tracking-wider transition-colors"
+                  >
+                    Тарифы →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. ИНЖЕНЕРНЫЙ КАЛЬКУЛЯТОР И ОФОРМЛЕНИЕ ЗАЯВКИ -->
+  <section class="w-full bg-surface-container-lowest py-10 lg:py-14" id="section-calculator">
+    <div class="max-w-7xl mx-auto px-4 md:px-10">
+      <DeliveryCalculator client:load />
+    </div>
+  </section>
+
+  <!-- 6. НАША ТЕХНИКА -->
+  <section class="w-full bg-surface py-10 lg:py-14 border-t-2 border-surface-variant" id="section-fleet">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 flex flex-col gap-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary font-bold">
+            Автопарк компании
+          </span>
+          <h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl uppercase text-primary font-bold">
+            Какая техника приедет на ваш заказ
+          </h2>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+          Подбираем машину под ширину ваших ворот, объём груза и подъездные пути — от компактной Газели и манёвренного ЗИЛа до 20-тонного КамАЗа.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {VEHICLES.map((v) => (
+          <div class="bg-surface-container-lowest border-2 border-surface-variant flex flex-col justify-between">
+            <div>
+              <div class="relative aspect-[8/5] bg-surface-dim overflow-hidden border-b border-surface-variant">
+                <img
+                  src={v.image}
+                  alt={v.name}
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                  class="w-full h-full object-cover"
+                />
+                <span class="absolute top-2 left-2 bg-primary text-on-primary px-2 py-0.5 font-label-technical text-label-technical uppercase font-bold">
+                  {v.badge}
+                </span>
+              </div>
+              <div class="p-4 flex flex-col gap-2">
+                <span class="font-label-technical text-label-technical uppercase text-on-surface-variant">
+                  {v.type}
+                </span>
+                <h3 class="font-headline-sm text-headline-sm uppercase text-primary font-bold">
+                  {v.name}
+                </h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">
+                  {v.description}
+                </p>
+                <div class="bg-surface p-2.5 mt-1 border border-surface-variant font-label-technical text-label-technical flex flex-col gap-1">
+                  <div class="flex justify-between">
+                    <span class="text-on-surface-variant">Грузоподъёмность:</span>
+                    <span class="font-bold text-on-surface">до {v.maxTons} т</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-on-surface-variant">Кузов:</span>
+                    <span class="font-bold text-on-surface">до {v.maxVolumeM3} м³</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-on-surface-variant">Разгрузка:</span>
+                    <span class="font-bold text-on-surface text-right">{v.unloading}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-4 pt-0 flex items-center justify-between border-t border-surface-variant mt-2 pt-3">
+              <span class="font-tabular-price text-headline-sm text-secondary font-bold tabular-nums">
+                {v.rateUnit}
+              </span>
+              <a
+                href="#section-calculator"
+                class="min-h-[44px] inline-flex items-center px-3 py-1.5 bg-primary hover:bg-primary-dark active:translate-y-px text-on-primary font-label-technical text-label-technical uppercase font-bold"
+              >
+                Заказать
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. КАК ЗАКАЗАТЬ (3 ПРОСТЫХ ШАГА) -->
+  <section class="on-dark w-full bg-primary text-on-primary py-10 lg:py-12">
+    <div class="max-w-7xl mx-auto px-4 md:px-10">
+      <div class="mb-6">
+        <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary-fixed font-bold">
+          Оплата по факту
+        </span>
+        <h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl uppercase text-on-primary font-bold mt-1">
+          Как проходит заказ
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-primary-dark p-6 border border-primary-fixed-dim/30">
+          <h3 class="font-headline-md text-headline-md uppercase text-on-primary font-bold">
+            Звонок или расчёт на сайте
+          </h3>
+          <p class="font-body-md text-body-md text-primary-fixed mt-2">
+            Позвоните по номеру <strong class="text-on-primary">{SITE_CONFIG.phones.main}</strong> или отправьте расчёт из калькулятора в WhatsApp. Для оценки мусора можно прислать фото кучи.
+          </p>
+        </div>
+
+        <div class="bg-primary-dark p-6 border border-primary-fixed-dim/30">
+          <h3 class="font-headline-md text-headline-md uppercase text-on-primary font-bold">
+            Подбор машины и времени
+          </h3>
+          <p class="font-body-md text-body-md text-primary-fixed mt-2">
+            Уточняем ширину заезда (СНТ, арка, ворота), согласуем точную сумму с доставкой и время подачи — обычно привозим в течение 2–3 часов в день звонка.
+          </p>
+        </div>
+
+        <div class="bg-primary-dark p-6 border border-primary-fixed-dim/30">
+          <h3 class="font-headline-md text-headline-md uppercase text-on-primary font-bold">
+            Разгрузка и оплата по факту
+          </h3>
+          <p class="font-body-md text-body-md text-primary-fixed mt-2">
+            Привозим материал, аккуратно выгружаем (при необходимости с грузчиками или манипулятором). Вы проверяете заказ и оплачиваете водителю наличными или переводом.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. ЗОНЫ ДОСТАВКИ И СТОИМОСТЬ РЕЙСА -->
+  <section class="w-full bg-surface py-10 lg:py-14 border-b-2 border-surface-variant" id="section-zones">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 flex flex-col gap-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary font-bold">
+            География работы
+          </span>
+          <h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl uppercase text-primary font-bold">
+            Зоны доставки по Чебоксарам, Новочебоксарску и Чувашии
+          </h2>
+        </div>
+        <span class="font-label-technical text-label-technical bg-surface-container-lowest border border-surface-variant px-3 py-1.5 uppercase text-on-surface-variant">
+          Самовывоз: в 500 м от аэропорта Чебоксары
+        </span>
+      </div>
+
+      {SITE_CONFIG.isDemoPrices && (
+        <p class="font-body-sm text-body-sm text-on-surface-variant -mt-2">
+          Стоимость рейса — ориентир. Точную сумму назовём по телефону.
+        </p>
+      )}
+      <p class="lg:hidden font-body-sm text-body-sm text-on-surface-variant -mt-2">Таблицу можно листать вбок →</p>
+      <div class="overflow-x-auto bg-surface-container-lowest border-2 border-primary" tabindex="0" role="region" aria-label="Таблица стоимости доставки по зонам">
+        <table class="w-full min-w-[760px] text-left border-collapse">
+          <thead>
+            <tr class="bg-primary text-on-primary font-label-technical text-label-technical uppercase tracking-wider">
+              <th scope="col" class="py-3.5 px-4">Зона / Населённые пункты</th>
+              <th scope="col" class="py-3.5 px-4">Расстояние</th>
+              <th scope="col" class="py-3.5 px-4 text-right">Газель (до 1.5 т)</th>
+              <th scope="col" class="py-3.5 px-4 text-right">ЗИЛ / ГАЗ (до 5 т)</th>
+              <th scope="col" class="py-3.5 px-4 text-right">КамАЗ (10–15 т)</th>
+              <th scope="col" class="py-3.5 px-4">Срок подачи</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-variant font-body-md text-body-md">
+            {DELIVERY_ZONES.map((z, idx) => (
+              <tr class={idx % 2 === 0 ? 'bg-surface-container-lowest' : 'bg-surface'}>
+                <td class="py-3.5 px-4">
+                  <strong class="font-headline-sm text-headline-sm uppercase text-primary block">
+                    {z.name}
+                  </strong>
+                  <span class="font-body-sm text-body-sm text-on-surface-variant">{z.areas}</span>
+                </td>
+                <td class="py-3.5 px-4 font-label-technical text-label-technical uppercase text-on-surface-variant">
+                  {z.distanceKm}
+                </td>
+                <td class="py-3.5 px-4 text-right font-tabular-price text-headline-sm text-on-surface tabular-nums">
+                  {z.deliveryPriceGazelle === 0 ? '0 ₽' : `от ${z.deliveryPriceGazelle.toLocaleString('ru-RU')} ₽`}
+                </td>
+                <td class="py-3.5 px-4 text-right font-tabular-price text-headline-sm text-primary tabular-nums">
+                  {z.deliveryPriceZil === 0 ? '0 ₽' : `от ${z.deliveryPriceZil.toLocaleString('ru-RU')} ₽`}
+                </td>
+                <td class="py-3.5 px-4 text-right font-tabular-price text-headline-sm text-secondary tabular-nums">
+                  {z.deliveryPriceKamaz === 0 ? '0 ₽' : `от ${z.deliveryPriceKamaz.toLocaleString('ru-RU')} ₽`}
+                </td>
+                <td class="py-3.5 px-4 font-body-sm text-body-sm font-semibold text-on-surface">
+                  {z.etaLabel}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. ЧАСТЫЕ ВОПРОСЫ (FAQ) -->
+  <section class="w-full bg-surface-container-lowest py-10 lg:py-14" id="section-faq">
+    <div class="max-w-5xl mx-auto px-4 md:px-10">
+      <div class="mb-6">
+        <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary font-bold">
+          Ответы на частые вопросы
+        </span>
+        <h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl uppercase text-primary font-bold mt-1">
+          Что важно знать перед заказом
+        </h2>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        {MAIN_FAQ.map((item, idx) => (
+          <details
+            class="group bg-surface border-2 border-surface-variant open:border-primary p-4 sm:p-5 transition-colors"
+            open={idx === 0}
+          >
+            <summary class="min-h-[44px] font-headline-sm text-headline-sm uppercase text-primary font-bold cursor-pointer list-none [&::-webkit-details-marker]:hidden flex items-center justify-between gap-4">
+              <span>{item.q}</span>
+              <span class="shrink-0 w-8 h-8 inline-flex items-center justify-center bg-primary text-on-primary font-headline-sm text-headline-sm" aria-hidden="true">
+                <span class="group-open:hidden">+</span><span class="hidden group-open:inline">−</span>
+              </span>
+            </summary>
+            <p class="mt-3 pt-3 border-t border-surface-variant font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              {item.a}
+            </p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Клиентский скрипт переключения табов, фильтрации каталога и предвыбора в калькуляторе -->
+  <script>
+    function initHomeInteractions() {
+      // 1. Переключатель "Нужно привезти" / "Вывезти мусор и спецтехника"
+      const tabBring = document.getElementById('switch-tab-bring');
+      const tabRemove = document.getElementById('switch-tab-remove');
+      const panelBring = document.getElementById('panel-bring');
+      const panelRemove = document.getElementById('panel-remove');
+
+      if (tabBring && tabRemove && panelBring && panelRemove) {
+        tabBring.addEventListener('click', () => {
+          tabBring.setAttribute('aria-pressed', 'true');
+          tabRemove.setAttribute('aria-pressed', 'false');
+          tabBring.className =
+            'min-h-[44px] px-4 py-2 bg-primary text-on-primary font-label-lg text-label-lg uppercase font-bold tracking-wider transition-colors';
+          tabRemove.className =
+            'min-h-[44px] px-4 py-2 bg-transparent text-primary hover:bg-surface-container font-label-lg text-label-lg uppercase font-bold tracking-wider transition-colors';
+          panelBring.classList.remove('hidden');
+          panelBring.classList.add('grid');
+          panelRemove.classList.add('hidden');
+          panelRemove.classList.remove('grid');
+        });
+
+        tabRemove.addEventListener('click', () => {
+          tabRemove.setAttribute('aria-pressed', 'true');
+          tabBring.setAttribute('aria-pressed', 'false');
+          tabRemove.className =
+            'min-h-[44px] px-4 py-2 bg-primary text-on-primary font-label-lg text-label-lg uppercase font-bold tracking-wider transition-colors';
+          tabBring.className =
+            'min-h-[44px] px-4 py-2 bg-transparent text-primary hover:bg-surface-container font-label-lg text-label-lg uppercase font-bold tracking-wider transition-colors';
+          panelRemove.classList.remove('hidden');
+          panelRemove.classList.add('grid');
+          panelBring.classList.add('hidden');
+          panelBring.classList.remove('grid');
+        });
+      }
+
+      // 2. Фильтрация каталога по категориям (Все / Стройка / Сад / Печь)
+      const catPills = document.querySelectorAll('.cat-pill');
+      const cards = document.querySelectorAll('.material-card');
+
+      function applyCategoryFilter(cat: string) {
+        catPills.forEach((pill) => {
+          const pillCat = pill.getAttribute('data-cat-filter');
+          pill.setAttribute('aria-pressed', String(pillCat === cat));
+          if (pillCat === cat) {
+            pill.className =
+              'cat-pill min-h-[44px] px-3.5 py-2 bg-primary text-on-primary font-label-technical text-label-technical uppercase tracking-wider font-bold';
+          } else {
+            pill.className =
+              'cat-pill min-h-[44px] px-3.5 py-2 bg-surface text-on-surface hover:bg-surface-container font-label-technical text-label-technical uppercase tracking-wider font-bold border border-surface-variant';
+          }
+        });
+
+        cards.forEach((card) => {
+          const cardCat = card.getAttribute('data-category');
+          if (cat === 'all' || cardCat === cat) {
+            (card as HTMLElement).style.display = 'flex';
+          } else {
+            (card as HTMLElement).style.display = 'none';
+          }
+        });
+      }
+
+      catPills.forEach((pill) => {
+        pill.addEventListener('click', () => {
+          const cat = pill.getAttribute('data-cat-filter') || 'all';
+          applyCategoryFilter(cat);
+        });
+      });
+
+      document.querySelectorAll('.branch-tile').forEach((tile) => {
+        tile.addEventListener('click', () => {
+          const targetCat = tile.getAttribute('data-filter-target');
+          if (targetCat) applyCategoryFilter(targetCat);
+        });
+      });
+
+      // 3. Кнопки "Заказать" / "Вызвать" -> предвыбор позиции в калькуляторе и плавный скролл
+      document.querySelectorAll('.order-trigger-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const type = btn.getAttribute('data-order-type') as 'material' | 'service';
+          const id = btn.getAttribute('data-order-id') || '';
+          window.dispatchEvent(
+            new CustomEvent('sr21:select-item', {
+              detail: { type, id },
+            })
+          );
+          const calcSection = document.getElementById('section-calculator');
+          if (calcSection) {
+            calcSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      });
+    }
+
+    initHomeInteractions();
+  </script>
+</BaseLayout>

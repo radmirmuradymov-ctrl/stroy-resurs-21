@@ -1,0 +1,482 @@
+---
+import '@fontsource/oswald/700.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '../styles/global.css';
+import { SITE_CONFIG, MATERIALS, SERVICES } from '../data/siteConfig';
+import { basePrice } from '../utils/calculator';
+
+interface Props {
+  title: string;
+  description?: string;
+  currentPath?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = 'Доставка песка, щебня, ОПГС, чернозёма, торфа и дров от 500 кг до 20 т в Чебоксарах и Чувашии. Вывоз строительного мусора на спецполигон, услуги манипулятора, самосвалов и грузчиков.',
+  currentPath = '/',
+  noindex = false,
+} = Astro.props;
+
+const schemaOrg = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: `${SITE_CONFIG.companyName} ${SITE_CONFIG.regionName}`,
+  description,
+  telephone: SITE_CONFIG.phones.main,
+  email: SITE_CONFIG.email,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Чебоксары',
+    addressRegion: 'Чувашская Республика',
+    streetAddress: SITE_CONFIG.addresses.primary,
+    addressCountry: 'RU',
+  },
+  openingHours: 'Mo-Su', // часы не подтверждены, известно только «ежедневно»
+  sameAs: [SITE_CONFIG.socials.vkGroup, SITE_CONFIG.socials.telegramChannel],
+};
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {/* Демо на GitHub Pages не должно попадать в поиск */}
+    {(noindex || import.meta.env.BASE_URL !== '/') && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="icon" type="image/webp" href="/logo.webp" />
+    <script type="application/ld+json" set:html={JSON.stringify(schemaOrg)} />
+  </head>
+  <body class="bg-background font-body-md text-on-surface antialiased pb-20 lg:pb-0">
+    <!-- Пропуск к основному контенту (доступность с клавиатуры) -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-primary focus:text-on-primary focus:px-4 focus:py-2 font-label-lg"
+    >
+      Перейти к основному содержимому
+    </a>
+
+    <!-- Шапка сайта в индустриальном стиле Stitch -->
+    <header class="on-dark sticky top-0 left-0 w-full z-50 border-b border-primary-dark">
+      <!-- Верхняя техническая полоса -->
+      <div class="bg-primary-dark text-on-primary">
+        <div class="max-w-7xl mx-auto px-4 md:px-10 min-h-[38px] py-1 flex flex-wrap items-center justify-between gap-2 text-label-technical">
+          <div class="flex flex-wrap items-center gap-4">
+            <span class="font-label-technical uppercase tracking-wider text-primary-fixed">
+              Чебоксары • Новочебоксарск • Чувашия
+            </span>
+            <span class="hidden md:inline-block text-primary-fixed-dim">
+              {SITE_CONFIG.schedule}
+            </span>
+            <span class="hidden xl:inline-block bg-primary px-2 py-0.5 text-secondary-fixed">
+              От 500 кг (в мешках) до 20 т
+            </span>
+          </div>
+
+          <div class="flex items-center gap-3 sm:gap-5">
+            <a
+              href={`tel:${SITE_CONFIG.phones.secondaryRaw}`}
+              class="hidden sm:inline-block font-label-technical text-primary-fixed hover:text-secondary-fixed transition-colors tabular-nums"
+            >
+              {SITE_CONFIG.phones.secondary}
+            </a>
+            <a
+              href={SITE_CONFIG.socials.telegramChannel}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-label-technical uppercase text-secondary-fixed hover:underline"
+            >
+              Канал в Telegram
+            </a>
+            <a
+              href={SITE_CONFIG.socials.vkGroup}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-label-technical uppercase text-primary-fixed hover:underline"
+            >
+              Группа ВК
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Основная навигационная полоса -->
+      <div class="bg-primary text-on-primary">
+        <div class="max-w-7xl mx-auto px-4 md:px-10 min-h-[76px] py-2 flex items-center justify-between gap-4">
+          <!-- Логотип -->
+          <a href="/" class="flex items-center gap-3 group shrink-0">
+            <img
+              src="/logo.webp"
+              alt="Логотип Строй Ресурс 21 Чувашия"
+              width="52"
+              height="52"
+              class="w-12 h-12 object-contain bg-surface-container-lowest p-0.5 rounded-sm border border-surface-variant"
+            />
+            <div class="flex flex-col">
+              <span class="font-headline-md text-headline-sm sm:text-headline-md font-bold uppercase tracking-tight text-on-primary leading-none">
+                Строй Ресурс 21
+              </span>
+              <span class="hidden sm:block lg:hidden 2xl:block font-label-technical text-label-technical tracking-wider text-primary-fixed-dim uppercase mt-1">
+                Стройматериалы • Спецтехника • Вывоз мусора
+              </span>
+            </div>
+          </a>
+
+          <!-- Навигация (Десктоп) -->
+          <nav class="hidden lg:flex items-center gap-0.5" aria-label="Основная навигация">
+            <a
+              href="/#section-materials"
+              class={`whitespace-nowrap min-h-[44px] inline-flex items-center px-2.5 py-2 font-label-lg text-label-lg uppercase tracking-wider transition-colors ${
+                currentPath.startsWith('/materialy')
+                  ? 'bg-primary-dark text-on-primary font-bold'
+                  : 'text-primary-fixed hover:text-on-primary hover:bg-primary-dark/50'
+              }`}
+            >
+              Материалы
+            </a>
+            <a
+              href="/#section-services"
+              class={`whitespace-nowrap min-h-[44px] inline-flex items-center px-2.5 py-2 font-label-lg text-label-lg uppercase tracking-wider transition-colors ${
+                currentPath.startsWith('/uslugi')
+                  ? 'bg-primary-dark text-on-primary font-bold'
+                  : 'text-primary-fixed hover:text-on-primary hover:bg-primary-dark/50'
+              }`}
+            >
+              Услуги
+            </a>
+            <a
+              href="/#section-calculator"
+              class="whitespace-nowrap min-h-[44px] inline-flex items-center px-2.5 py-2 font-label-lg text-label-lg text-primary-fixed hover:text-on-primary hover:bg-primary-dark/50 uppercase tracking-wider transition-colors"
+            >
+              Калькулятор
+            </a>
+            <a
+              href="/#section-fleet"
+              class="whitespace-nowrap min-h-[44px] inline-flex items-center px-2.5 py-2 font-label-lg text-label-lg text-primary-fixed hover:text-on-primary hover:bg-primary-dark/50 uppercase tracking-wider transition-colors"
+            >
+              Техника
+            </a>
+            <a
+              href="/#section-zones"
+              class="whitespace-nowrap min-h-[44px] inline-flex items-center px-2.5 py-2 font-label-lg text-label-lg text-primary-fixed hover:text-on-primary hover:bg-primary-dark/50 uppercase tracking-wider transition-colors"
+            >
+              Доставка
+            </a>
+          </nav>
+
+          <!-- Телефон и кнопка в шапке -->
+          <div class="flex items-center gap-3">
+            <div class="hidden sm:flex lg:hidden xl:flex flex-col text-right">
+              <a
+                href={`tel:${SITE_CONFIG.phones.mainRaw}`}
+                class="whitespace-nowrap font-headline-md text-headline-sm md:text-headline-md text-on-primary hover:text-secondary-fixed transition-colors tabular-nums leading-none"
+              >
+                {SITE_CONFIG.phones.main}
+              </a>
+              <span class="font-label-technical text-label-technical text-secondary-fixed uppercase mt-1">
+                Привоз в день звонка
+              </span>
+            </div>
+            <a
+              href="/#section-calculator"
+              class="hidden sm:inline-flex whitespace-nowrap min-h-[44px] items-center justify-center bg-secondary-container hover:bg-secondary-hover active:translate-y-px text-on-secondary px-4 py-2.5 font-label-technical text-label-technical uppercase font-bold tracking-wider transition-colors"
+            >
+              Рассчитать заказ
+            </a>
+            <button
+              type="button"
+              id="menu-toggle"
+              class="lg:hidden min-w-[48px] min-h-[48px] inline-flex flex-col items-center justify-center gap-1 border-2 border-primary-fixed-dim hover:bg-primary-dark active:bg-primary-dark aria-expanded:bg-primary-dark text-on-primary px-2"
+              aria-expanded="false"
+              aria-controls="mobile-menu"
+            >
+              <span class="sr-only" data-menu-label>Открыть меню</span>
+              <span class="menu-bar block w-6 h-0.5 bg-current transition-transform" aria-hidden="true"></span>
+              <span class="menu-bar block w-6 h-0.5 bg-current transition-opacity" aria-hidden="true"></span>
+              <span class="menu-bar block w-6 h-0.5 bg-current transition-transform" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Мобильное меню (< 1024 px) -->
+      <nav
+        id="mobile-menu"
+        class="lg:hidden bg-primary-dark text-on-primary border-t-2 border-secondary-container max-h-[calc(100dvh-190px)] lg:max-h-none overflow-y-auto overscroll-contain"
+        aria-label="Меню сайта"
+        hidden
+      >
+        <div class="max-w-7xl mx-auto px-4 md:px-10 py-4 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+          <div>
+            <p class="font-label-technical text-label-technical uppercase tracking-widest text-secondary-fixed mb-1">Материалы с доставкой</p>
+            <ul>
+              {MATERIALS.map((m) => (
+                <li>
+                  <a
+                    href={`/materialy/${m.slug}`}
+                    aria-current={currentPath === `/materialy/${m.slug}` ? 'page' : undefined}
+                    class="flex items-center justify-between gap-3 min-h-[44px] py-2 border-b border-primary font-body-md text-body-md hover:text-secondary-fixed aria-[current=page]:text-secondary-fixed aria-[current=page]:font-semibold"
+                  >
+                    <span>{m.shortName}</span>
+                    <span class="font-label-technical text-label-technical text-primary-fixed-dim tabular-nums shrink-0">
+                      от {basePrice(m).value.toLocaleString('ru-RU')} ₽/{basePrice(m).unit}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="flex flex-col gap-5">
+            <div>
+              <p class="font-label-technical text-label-technical uppercase tracking-widest text-secondary-fixed mb-1">Услуги и техника</p>
+              <ul>
+                {SERVICES.map((s) => (
+                  <li>
+                    <a
+                      href={`/uslugi/${s.slug}`}
+                      aria-current={currentPath === `/uslugi/${s.slug}` ? 'page' : undefined}
+                      class="flex items-center justify-between gap-3 min-h-[44px] py-2 border-b border-primary font-body-md text-body-md hover:text-secondary-fixed aria-[current=page]:text-secondary-fixed aria-[current=page]:font-semibold"
+                    >
+                      <span>{s.shortName}</span>
+                      <span class="font-label-technical text-label-technical text-primary-fixed-dim tabular-nums shrink-0">
+                        от {s.priceFrom.toLocaleString('ru-RU')} ₽/{s.unitLabel}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p class="font-label-technical text-label-technical uppercase tracking-widest text-secondary-fixed mb-1">Разделы</p>
+              <ul class="grid grid-cols-2 gap-x-4">
+                {[
+                  ['/#section-calculator', 'Калькулятор'],
+                  ['/#section-fleet', 'Техника'],
+                  ['/#section-zones', 'Зоны доставки'],
+                  ['/#section-faq', 'Вопросы'],
+                  ['/#footer-contacts', 'Контакты'],
+                ].map(([href, label]) => (
+                  <li>
+                    <a href={href} class="flex items-center min-h-[44px] py-2 border-b border-primary font-body-md text-body-md hover:text-secondary-fixed">
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <a
+              href={`tel:${SITE_CONFIG.phones.secondaryRaw}`}
+              class="flex items-center min-h-[44px] font-label-technical text-label-technical uppercase text-primary-fixed-dim tabular-nums"
+            >
+              Второй номер:&nbsp;<span class="text-on-primary">{SITE_CONFIG.phones.secondary}</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main-content" class="w-full min-h-[calc(100vh-120px)]">
+      <slot />
+    </main>
+
+    <!-- Подвал сайта -->
+    <footer class="on-dark w-full bg-primary-dark text-on-primary border-t-4 border-secondary-container" id="footer-contacts">
+      <div class="max-w-7xl mx-auto px-4 md:px-10 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- Колонка 1: О компании -->
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <img
+                src="/logo.webp"
+                alt="Строй Ресурс 21"
+                width="44"
+                height="44"
+                class="w-11 h-11 object-contain bg-surface-container-lowest p-0.5 rounded-sm"
+              />
+              <div>
+                <span class="font-headline-sm text-headline-sm uppercase tracking-wide block">
+                  Строй Ресурс 21
+                </span>
+                <span class="font-label-technical text-label-technical text-primary-fixed-dim uppercase">
+                  Чувашия • Чебоксары
+                </span>
+              </div>
+            </div>
+            <p class="font-body-sm text-body-sm text-primary-fixed-dim">
+              Доставка сыпучих и штучных стройматериалов от 500 кг до 20 т (в мешках и россыпью). Услуги самосвалов, манипулятора, грузчиков и вывоз строительного мусора на спецполигон.
+            </p>
+            <div class="flex items-center gap-2 font-label-technical text-label-technical text-secondary-fixed uppercase">
+              <span class="w-2 h-2 bg-secondary-container inline-block"></span>
+              {SITE_CONFIG.schedule}
+            </div>
+          </div>
+
+          <!-- Колонка 2: Материалы -->
+          <div class="flex flex-col gap-2.5">
+            <h3 class="font-headline-sm text-headline-sm uppercase tracking-wider text-secondary-fixed mb-1">
+              Материалы с доставкой
+            </h3>
+            <ul class="flex flex-col gap-2 font-body-sm text-body-sm text-primary-fixed">
+              {MATERIALS.map((m) => (
+                <li>
+                  <a href={`/materialy/${m.slug}`} class="hover:text-secondary-fixed transition-colors">
+                    {m.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Колонка 3: Услуги и спецтехника -->
+          <div class="flex flex-col gap-2.5">
+            <h3 class="font-headline-sm text-headline-sm uppercase tracking-wider text-secondary-fixed mb-1">
+              Услуги и спецтехника
+            </h3>
+            <ul class="flex flex-col gap-2 font-body-sm text-body-sm text-primary-fixed">
+              {SERVICES.map((s) => (
+                <li>
+                  <a href={`/uslugi/${s.slug}`} class="hover:text-secondary-fixed transition-colors">
+                    {s.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Колонка 4: Контакты -->
+          <div class="flex flex-col gap-4">
+            <h3 class="font-headline-sm text-headline-sm uppercase tracking-wider text-secondary-fixed">
+              Контакты
+            </h3>
+            <div class="flex flex-col">
+              <a
+                href={`tel:${SITE_CONFIG.phones.mainRaw}`}
+                class="font-tabular-price text-headline-md text-on-primary hover:text-secondary-fixed tabular-nums"
+              >
+                {SITE_CONFIG.phones.main}
+              </a>
+              <a
+                href={`tel:${SITE_CONFIG.phones.secondaryRaw}`}
+                class="font-body-md text-body-md text-primary-fixed hover:text-secondary-fixed tabular-nums"
+              >
+                {SITE_CONFIG.phones.secondary}
+              </a>
+            </div>
+            <dl class="flex flex-col border-t border-primary font-body-sm text-body-sm">
+              {[
+                ['Написать', [
+                  ['WhatsApp', SITE_CONFIG.socials.whatsappUrl],
+                  ['Telegram', SITE_CONFIG.socials.telegram],
+                ]],
+                ['Группы', [
+                  ['ВКонтакте', SITE_CONFIG.socials.vkGroup],
+                  ['Канал в Telegram', SITE_CONFIG.socials.telegramChannel],
+                ]],
+              ].map(([label, links]) => (
+                <div class="py-2.5 border-b border-primary">
+                  <dt class="font-label-technical text-label-technical uppercase text-primary-fixed-dim">{label}</dt>
+                  <dd class="flex flex-wrap gap-x-4">
+                    {(links as string[][]).map(([text, href]) => (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="min-h-[44px] inline-flex items-center text-on-primary underline decoration-primary-fixed-dim underline-offset-4 hover:text-secondary-fixed hover:decoration-secondary-fixed"
+                      >
+                        {text}
+                      </a>
+                    ))}
+                  </dd>
+                </div>
+              ))}
+              <div class="py-2.5 border-b border-primary">
+                <dt class="font-label-technical text-label-technical uppercase text-primary-fixed-dim">Почта</dt>
+                <dd>
+                  <a
+                    href={`mailto:${SITE_CONFIG.email}`}
+                    class="min-h-[44px] inline-flex items-center text-on-primary underline decoration-primary-fixed-dim underline-offset-4 hover:text-secondary-fixed break-all"
+                  >
+                    {SITE_CONFIG.email}
+                  </a>
+                </dd>
+              </div>
+              <div class="py-2.5">
+                <dt class="font-label-technical text-label-technical uppercase text-primary-fixed-dim">Адрес</dt>
+                <dd class="text-primary-fixed pt-1">{SITE_CONFIG.addresses.primary}</dd>
+                <dd class="text-primary-fixed-dim pt-1">{SITE_CONFIG.addresses.pickupYard}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="mt-10 pt-6 border-t border-primary flex flex-col sm:flex-row items-center justify-between gap-4 font-body-sm text-body-sm text-primary-fixed-dim">
+          <p>© {new Date().getFullYear()} «{SITE_CONFIG.companyName} {SITE_CONFIG.regionName}» (г. Чебоксары). Все расчёты на сайте носят информационный характер.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Фиксированная нижняя панель для мобильных устройств (70-80% трафика) -->
+    <div
+      class="on-dark fixed bottom-0 inset-x-0 z-50 lg:hidden bg-primary-dark border-t-2 border-secondary-container px-3 py-2"
+      role="region"
+      aria-label="Быстрая связь"
+    >
+      <div class="grid grid-cols-12 gap-2 items-center max-w-lg mx-auto">
+        <a
+          href={`tel:${SITE_CONFIG.phones.mainRaw}`}
+          class="col-span-6 min-h-[46px] bg-secondary-container active:bg-secondary-hover text-on-secondary flex items-center justify-center gap-1.5 font-label-lg text-label-lg uppercase font-bold tabular-nums px-2 rounded-sm"
+        >
+          <span>Позвонить</span>
+        </a>
+        <a
+          href={SITE_CONFIG.socials.whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="col-span-3 min-h-[46px] bg-tertiary text-on-tertiary flex items-center justify-center font-label-technical text-label-technical uppercase font-bold px-2 rounded-sm"
+        >
+          WhatsApp
+        </a>
+        <a
+          href={SITE_CONFIG.socials.telegram}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="col-span-3 min-h-[46px] bg-primary text-on-primary border border-primary-fixed-dim flex items-center justify-center font-label-technical text-label-technical uppercase font-bold px-2 rounded-sm"
+        >
+          Telegram
+        </a>
+      </div>
+    </div>
+    <script>
+      const toggle = document.getElementById('menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+      if (toggle && menu) {
+        const label = toggle.querySelector('[data-menu-label]');
+        const bars = toggle.querySelectorAll<HTMLElement>('.menu-bar');
+        const setOpen = (open: boolean) => {
+          menu.hidden = !open;
+          toggle.setAttribute('aria-expanded', String(open));
+          if (label) label.textContent = open ? 'Закрыть меню' : 'Открыть меню';
+          bars[0].style.transform = open ? 'translateY(6px) rotate(45deg)' : '';
+          bars[1].style.opacity = open ? '0' : '';
+          bars[2].style.transform = open ? 'translateY(-6px) rotate(-45deg)' : '';
+        };
+        toggle.addEventListener('click', () => setOpen(menu.hidden));
+        menu.addEventListener('click', (e) => {
+          if ((e.target as HTMLElement).closest('a')) setOpen(false);
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !menu.hidden) {
+            setOpen(false);
+            toggle.focus();
+          }
+        });
+        matchMedia('(min-width: 1024px)').addEventListener('change', (e) => e.matches && setOpen(false));
+      }
+    </script>
+  </body>
+</html>

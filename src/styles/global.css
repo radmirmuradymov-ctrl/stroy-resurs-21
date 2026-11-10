@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #1E3F8C;
+    --color-primary-dark: #14213D;
+    --color-accent: #E8642A;
+    --color-accent-hover: #C44E1A;
+    --color-canvas: #EEEEEC;
+    --color-surface: #FFFFFF;
+    --color-border: #D2D6DC;
+    --color-text: #14213D;
+    --color-text-muted: #5B6575;
+    --color-green: #107C41;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-canvas);
+    color: var(--color-text);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-canvas);
+    color: var(--color-text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Focus visible rule: crisp 2px solid #1E3F8C, no soft blur */
+  :focus-visible {
+    outline: 2px solid #1E3F8C;
+    outline-offset: 2px;
+  }
+
+  /* На синих и тёмных плашках синий контур не виден */
+  .on-dark :focus-visible {
+    outline-color: #FFB599;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

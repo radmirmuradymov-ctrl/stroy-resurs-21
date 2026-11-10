@@ -1,0 +1,305 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DeliveryCalculator from '../../components/DeliveryCalculator';
+import { MATERIALS, SITE_CONFIG, type MaterialItem } from '../../data/siteConfig';
+import { basePrice, priceRows } from '../../utils/calculator';
+
+export function getStaticPaths() {
+  return MATERIALS.map((material) => ({
+    params: { slug: material.slug },
+    props: { material },
+  }));
+}
+
+interface Props {
+  material: MaterialItem;
+}
+
+const { material } = Astro.props;
+// Сначала того же направления, потом остальные
+const relatedMaterials = MATERIALS.filter((m) => m.id !== material.id)
+  .sort((x, y) => Number(y.category === material.category) - Number(x.category === material.category))
+  .slice(0, 3);
+const rows = priceRows(material.id);
+const price = basePrice(material);
+---
+
+<BaseLayout
+  title={`${material.name} с доставкой в Чебоксарах и Чувашии — от ${price.value} ₽/${price.unit} | Строй Ресурс 21`}
+  description={material.fullDescription}
+  currentPath={`/materialy/${material.slug}`}
+>
+  <!-- Хлебные крошки и статус -->
+  <section class="w-full bg-surface border-b border-surface-variant py-3">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 flex flex-wrap items-center justify-between gap-2">
+      <nav
+        class="flex flex-wrap items-center gap-2 font-label-technical text-label-technical uppercase tracking-wider text-on-surface-variant"
+        aria-label="Хлебные крошки"
+      >
+        <a href="/" class="hover:text-primary transition-colors">Главная</a>
+        <span aria-hidden="true">/</span>
+        <a href="/#section-materials" class="hover:text-primary transition-colors">Каталог материалов</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-primary font-bold" aria-current="page">{material.shortName}</span>
+      </nav>
+
+      <div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1 border border-surface-variant">
+        <span class="w-2 h-2 bg-secondary-container inline-block" aria-hidden="true"></span>
+        <span class="font-label-technical text-label-technical uppercase text-on-surface">
+          Доставка сегодня • {material.minOrderLabel}
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Заголовок материала и ключевые параметры -->
+  <section class="w-full bg-surface-container-lowest py-8 border-b-2 border-surface-variant">
+    <div class="max-w-7xl mx-auto px-4 md:px-10">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="bg-primary text-on-primary font-label-technical text-label-technical px-2.5 py-1 uppercase tracking-wider font-bold">
+              {material.categoryLabel}
+            </span>
+            <span class="bg-surface-container text-primary font-label-technical text-label-technical px-2.5 py-1 uppercase tracking-wider font-bold">
+              {material.badge}
+            </span>
+          </div>
+          <h1 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary uppercase font-bold tracking-tight mt-1">
+            {material.name} с доставкой по Чебоксарам
+          </h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">
+            {material.fullDescription}
+          </p>
+        </div>
+
+        <!-- Быстрые цифры -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 lg:max-w-[560px] shrink-0">
+          {material.specs.map((sp) => (
+            <div class="bg-surface p-3 border border-surface-variant flex flex-col justify-center">
+              <span class="font-label-technical text-label-technical text-on-surface-variant uppercase">
+                {sp.label}
+              </span>
+              <span class="font-body-md text-body-md text-primary font-semibold mt-0.5">
+                {sp.value}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Основной блок: Фото + Варианты фасовки и поставки -->
+  <section class="w-full py-10">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Левая колонка: Фото и преимущества -->
+      <div class="lg:col-span-5 flex flex-col gap-4">
+        <div class="bg-surface-container-lowest border-2 border-primary p-2">
+          <div class="aspect-[4/3] w-full overflow-hidden bg-surface-dim relative">
+            <img
+              src={material.image}
+              alt={material.imageAlt}
+              width="600"
+              height="450"
+              class="w-full h-full object-cover"
+            />
+            <span class="absolute top-2 left-2 bg-primary-dark/90 text-on-primary font-label-technical text-label-technical px-2.5 py-1 uppercase">
+              Иллюстрация фактуры
+            </span>
+          </div>
+          <p class="px-1 pt-2 font-body-sm text-body-sm text-on-surface-variant">{SITE_CONFIG.photoNote}</p>
+          <div class="p-3 bg-surface flex items-center justify-between mt-2">
+            <span class="font-label-technical text-label-technical text-primary uppercase font-bold">
+              Плотность: ~{material.bulkDensity} т/м³
+            </span>
+            <span class="font-label-technical text-label-technical text-on-surface-variant uppercase">
+              Мешок: {material.bagWeightKg} кг
+            </span>
+          </div>
+        </div>
+
+        <div class="bg-primary text-on-primary p-5 border-l-4 border-secondary-container">
+          <span class="font-label-technical text-label-technical uppercase text-secondary-fixed font-bold">
+            Почему заказывают у нас
+          </span>
+          <h2 class="font-headline-sm text-headline-sm uppercase font-bold mt-1">
+            Привезём от 10 мешков до 20-тонного КамАЗа
+          </h2>
+          <p class="font-body-sm text-body-sm text-primary-fixed mt-1.5">
+            Можно совместить в одной машине разные материалы в мешках (песок, щебень, цемент, чернозём, перегной или дрова) и заказать разгрузку нашими грузчиками.
+          </p>
+        </div>
+      </div>
+
+      <!-- Правая колонка: Тарифная сетка по фасовке и машинам -->
+      <div class="lg:col-span-7 flex flex-col gap-6">
+        <div class="bg-surface-container-lowest border-2 border-surface-variant p-6">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-5 pb-3 border-b border-surface-variant">
+            <div>
+              <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary font-bold">
+                Тарифная сетка поставки
+              </span>
+              <h2 class="font-headline-md text-headline-md uppercase text-primary font-bold">
+                Цена по объёму и машине
+              </h2>
+            </div>
+            {SITE_CONFIG.isDemoPrices && (
+              <span class="font-label-technical text-label-technical bg-secondary-fixed text-on-secondary-fixed px-2.5 py-1 uppercase font-bold">
+                Цены — ориентир
+              </span>
+            )}
+          </div>
+
+          <!-- Таблица считается тем же калькулятором, что и форма ниже -->
+          <div class="overflow-x-auto border-2 border-primary" tabindex="0" role="region" aria-label="Цены по объёму и машине">
+            <table class="w-full min-w-[560px] text-left border-collapse tabular-nums">
+              <caption class="sr-only">Ориентир стоимости {material.shortName.toLowerCase()} с доставкой по Чебоксарам</caption>
+              <thead>
+                <tr class="bg-primary text-on-primary font-label-technical text-label-technical uppercase tracking-wider">
+                  <th scope="col" class="whitespace-nowrap py-3 px-3">Объём</th>
+                  <th scope="col" class="whitespace-nowrap py-3 px-3">Вес / объём</th>
+                  <th scope="col" class="whitespace-nowrap py-3 px-3">Машина</th>
+                  <th scope="col" class="whitespace-nowrap py-3 px-3 text-right">Материал</th>
+                  <th scope="col" class="whitespace-nowrap py-3 px-3 text-right">С доставкой*</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-surface-variant">
+                {rows.map((r, i) => (
+                  <tr class={i % 2 ? 'bg-surface' : 'bg-surface-container-lowest'}>
+                    <th scope="row" class="py-3 px-3 font-headline-sm text-headline-sm uppercase text-primary whitespace-nowrap">
+                      {r.unit === 'bag' ? `${r.estimatedBags} мешков` : r.unit === 'm3' ? `${r.estimatedM3} м³` : `${r.estimatedTons} т`}
+                    </th>
+                    <td class="py-3 px-3 font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                      ≈ {r.estimatedTons} т · {r.estimatedM3} м³
+                    </td>
+                    <td class="py-3 px-3 font-body-sm text-body-sm text-on-surface font-semibold">{r.recommendedVehicle}</td>
+                    <td class="py-3 px-3 text-right font-body-md text-body-md text-on-surface whitespace-nowrap">
+                      {r.materialCost.toLocaleString('ru-RU')} ₽
+                    </td>
+                    <td class="py-3 px-3 text-right font-tabular-price text-headline-md text-secondary whitespace-nowrap">
+                      ~{r.totalCost.toLocaleString('ru-RU')} ₽
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-3 font-body-sm text-body-sm text-on-surface-variant">
+            * Доставка по Чебоксарам, без грузчиков. Мешок {material.bagWeightKg} кг — {material.pricePerBag} ₽.
+            Нужно больше 15 т или самовывоз с площадки у аэропорта — сумму назовём по телефону.
+          </p>
+          <div class="mt-6 pt-4 border-t border-surface-variant flex flex-wrap items-center justify-between gap-3">
+            <a
+              href="#material-calculator"
+              class="min-h-[48px] inline-flex items-center justify-center bg-secondary-container hover:bg-secondary-hover active:translate-y-px text-on-secondary px-6 py-3 font-label-lg text-label-lg uppercase font-bold tracking-wider transition-colors"
+            >
+              Рассчитать точную сумму с доставкой
+            </a>
+            <a
+              href={`tel:${SITE_CONFIG.phones.mainRaw}`}
+              class="min-h-[48px] inline-flex items-center justify-center bg-primary hover:bg-primary-dark text-on-primary px-5 py-3 font-label-lg text-label-lg uppercase font-bold tabular-nums transition-colors"
+            >
+              Позвонить: {SITE_CONFIG.phones.main}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Для чего подходит материал -->
+  <section class="w-full bg-surface-container-lowest py-10 border-t-2 border-b-2 border-surface-variant">
+    <div class="max-w-7xl mx-auto px-4 md:px-10">
+      <div class="mb-6">
+        <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary font-bold">
+          Практическое применение
+        </span>
+        <h2 class="font-headline-lg text-headline-xl-mobile md:text-headline-lg uppercase text-primary font-bold mt-1">
+          Для каких задач заказывают {material.shortName.toLowerCase()}
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {material.applications.map((app) => (
+          <div class="bg-surface p-5 border-2 border-surface-variant flex flex-col justify-between">
+            <div>
+              <h3 class="font-headline-sm text-headline-sm uppercase text-primary font-bold">
+                {app.title}
+              </h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">
+                {app.desc}
+              </p>
+            </div>
+            <div class="mt-4 pt-2 border-t border-surface-variant font-label-technical text-label-technical uppercase text-secondary font-bold">
+              {app.norm}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Калькулятор для этого материала -->
+  <section class="w-full py-10" id="material-calculator">
+    <div class="max-w-7xl mx-auto px-4 md:px-10">
+      <DeliveryCalculator
+        client:load
+        initialMaterialId={material.id}
+        initialUnit={material.defaultUnit}
+        initialQuantity={material.defaultUnit === 'bag' ? 20 : material.defaultUnit === 'm3' ? 5 : 10}
+      />
+    </div>
+  </section>
+
+  <!-- Вопросы по материалу + Похожие позиции -->
+  <section class="w-full bg-surface-container-lowest py-10 border-t-2 border-surface-variant">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div class="lg:col-span-6">
+        <h2 class="font-headline-lg text-headline-md uppercase text-primary font-bold mb-4">
+          Частые вопросы по позиции
+        </h2>
+        <div class="flex flex-col gap-3">
+          {material.faq.map((f) => (
+            <details class="group bg-surface p-4 border border-surface-variant open:border-primary" open>
+              <summary class="min-h-[44px] flex items-center cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+              <h3 class="font-headline-sm text-headline-sm uppercase text-primary font-bold">
+                {f.q}
+              </h3>
+              </summary>
+              <p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5">
+                {f.a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <div class="lg:col-span-6">
+        <h2 class="font-headline-lg text-headline-md uppercase text-primary font-bold mb-4">
+          Можно привезти попутно одной машиной
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {relatedMaterials.map((rel) => (
+            <a
+              href={`/materialy/${rel.slug}`}
+              class="bg-surface p-4 border-2 border-surface-variant hover:border-primary flex flex-col justify-between transition-colors"
+            >
+              <div>
+                <span class="font-label-technical text-label-technical uppercase text-secondary font-bold">
+                  {rel.categoryLabel}
+                </span>
+                <h3 class="font-headline-sm text-headline-sm uppercase text-primary font-bold mt-1">
+                  {rel.shortName}
+                </h3>
+              </div>
+              <span class="mt-4 font-tabular-price text-headline-sm text-primary font-bold tabular-nums">
+                от {basePrice(rel).value.toLocaleString('ru-RU')} ₽/{basePrice(rel).unit}
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

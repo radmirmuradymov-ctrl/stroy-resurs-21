@@ -1,0 +1,261 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DeliveryCalculator from '../../components/DeliveryCalculator';
+import { SERVICES, SITE_CONFIG, type ServiceItem } from '../../data/siteConfig';
+
+export function getStaticPaths() {
+  return SERVICES.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}
+
+interface Props {
+  service: ServiceItem;
+}
+
+const { service } = Astro.props;
+const otherServices = SERVICES.filter((s) => s.id !== service.id);
+---
+
+<BaseLayout
+  title={`${service.name} в Чебоксарах и Чувашии — от ${service.priceFrom} ₽ | Строй Ресурс 21`}
+  description={service.fullDescription}
+  currentPath={`/uslugi/${service.slug}`}
+>
+  <!-- Хлебные крошки -->
+  <section class="w-full bg-surface border-b border-surface-variant py-3">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 flex flex-wrap items-center justify-between gap-2">
+      <nav
+        class="flex flex-wrap items-center gap-2 font-label-technical text-label-technical uppercase tracking-wider text-on-surface-variant"
+        aria-label="Хлебные крошки"
+      >
+        <a href="/" class="hover:text-primary transition-colors">Главная</a>
+        <span aria-hidden="true">/</span>
+        <a href="/#section-services" class="hover:text-primary transition-colors">Услуги и спецтехника</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-primary font-bold" aria-current="page">{service.shortName}</span>
+      </nav>
+      <span class="font-label-technical text-label-technical uppercase bg-surface-container-lowest px-3 py-1 border border-surface-variant text-on-surface font-bold">
+        {service.badge}
+      </span>
+    </div>
+  </section>
+
+  <!-- Первый экран услуги (по макету Stitch 21_3) -->
+  <section class="w-full bg-surface-container-lowest py-8 lg:py-12 border-b-2 border-surface-variant">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div class="lg:col-span-7 flex flex-col gap-5">
+        <div class="inline-flex items-center gap-2 bg-primary text-on-primary px-3 py-1 font-label-technical text-label-technical uppercase tracking-widest self-start">
+          <span>Строй Ресурс 21 • Чебоксары и Чувашия</span>
+        </div>
+
+        <h1 class="font-headline-xl text-headline-xl-mobile lg:text-display text-primary uppercase font-bold leading-none tracking-tight">
+          {service.name}
+        </h1>
+
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+          {service.fullDescription}
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-3.5 bg-surface border-l-4 border-secondary-container">
+            <span class="block font-label-technical text-label-technical text-on-surface-variant uppercase">
+              Стоимость
+            </span>
+            <span class="font-tabular-price text-headline-md text-secondary-container font-bold tabular-nums">
+              от {service.priceFrom.toLocaleString('ru-RU')} ₽/{service.unitLabel}
+            </span>
+          </div>
+          <div class="p-3.5 bg-surface border-l-4 border-primary">
+            <span class="block font-label-technical text-label-technical text-on-surface-variant uppercase">
+              Подача техники
+            </span>
+            <span class="font-headline-sm text-headline-sm text-primary uppercase font-bold">
+              В день звонка
+            </span>
+          </div>
+          <div class="p-3.5 bg-surface border-l-4 border-tertiary">
+            <span class="block font-label-technical text-label-technical text-on-surface-variant uppercase">
+              Грузчики
+            </span>
+            <span class="font-headline-sm text-headline-sm text-primary uppercase font-bold">
+              Своя бригада от 600 ₽/ч
+            </span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 pt-1">
+          <a
+            href={`tel:${SITE_CONFIG.phones.mainRaw}`}
+            class="min-h-[48px] inline-flex items-center justify-center bg-secondary-container hover:bg-secondary-hover active:translate-y-px text-on-secondary px-6 py-3 font-label-lg text-label-lg uppercase font-bold tracking-wider tabular-nums transition-colors"
+          >
+            Вызвать по телефону: {SITE_CONFIG.phones.main}
+          </a>
+          <a
+            href="#service-order"
+            class="min-h-[48px] inline-flex items-center justify-center bg-primary hover:bg-primary-dark text-on-primary px-6 py-3 font-label-lg text-label-lg uppercase font-bold tracking-wider transition-colors"
+          >
+            Оставить заявку онлайн
+          </a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5">
+        <div class="bg-surface p-3 border-2 border-primary">
+          <div class="aspect-[8/5] w-full overflow-hidden bg-surface-dim relative">
+            <img
+              src={service.image}
+              alt={service.imageAlt}
+              width="600"
+              height="450"
+              class="w-full h-full object-cover"
+            />
+            <span class="absolute bottom-2 left-2 bg-primary-dark/90 text-on-primary px-2.5 py-1 font-label-technical text-label-technical uppercase">
+              Схема · фото из ВК позже
+            </span>
+          </div>
+          <ul class="mt-3 pt-2 border-t border-surface-variant flex flex-col gap-1.5 font-label-technical text-label-technical text-on-surface">
+            {service.bullets.map((b) => (
+              <li class="flex items-center gap-2">
+                <span class="text-secondary font-bold" aria-hidden="true">—</span>
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Тарифы и варианты машин по услуге -->
+  <section class="w-full bg-surface py-10 lg:py-12 border-b-2 border-surface-variant">
+    <div class="max-w-7xl mx-auto px-4 md:px-10">
+      <div class="mb-6">
+        <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary font-bold">
+          Тарифная сетка
+        </span>
+        <h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary uppercase font-bold mt-1">
+          Варианты техники и расценки
+        </h2>
+      </div>
+
+      <div class={`grid grid-cols-1 gap-6 ${service.tariffs.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
+        {service.tariffs.map((t) => (
+          <div class="bg-surface-container-lowest border-2 border-primary p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <span class="bg-primary text-on-primary px-2.5 py-0.5 font-label-technical text-label-technical uppercase font-bold">
+                  {t.badge}
+                </span>
+                <span class="font-label-technical text-label-technical text-on-surface-variant uppercase">
+                  {t.capacity}
+                </span>
+              </div>
+              <div class="aspect-[8/5] w-full overflow-hidden bg-surface-dim mb-4 border border-surface-variant">
+                <img src={t.image} alt={`Схема: ${t.name}`} loading="lazy" width="800" height="500" class="w-full h-full object-cover" />
+              </div>
+              <h3 class="font-headline-md text-headline-sm sm:text-headline-md text-primary uppercase font-bold">
+                {t.name}
+              </h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5">
+                {t.desc}
+              </p>
+              <ul class="mt-3 pt-3 border-t border-surface-variant flex flex-col gap-1.5 font-body-sm text-body-sm text-on-surface">
+                {t.features.map((f) => (
+                  <li class="flex items-center gap-2">
+                    <span class="text-secondary font-bold" aria-hidden="true">—</span>
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="mt-5 pt-3 border-t-2 border-surface-variant flex items-center justify-between">
+              <span class="font-tabular-price text-tabular-price text-secondary-container font-bold tabular-nums">
+                {t.price}
+              </span>
+              <a
+                href="#service-order"
+                data-service-id={service.id}
+                class="tariff-pick min-h-[44px] inline-flex items-center justify-center bg-secondary-container hover:bg-secondary-hover active:translate-y-px text-on-secondary px-4 py-2 font-label-technical text-label-technical uppercase font-bold tracking-wider transition-colors"
+              >
+                Выбрать
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Что именно выполняем -->
+  <section class="w-full bg-surface-container-lowest py-10 lg:py-12 border-b-2 border-surface-variant">
+    <div class="max-w-7xl mx-auto px-4 md:px-10">
+      <div class="mb-6">
+        <span class="font-label-technical text-label-technical uppercase tracking-widest text-secondary font-bold">
+          Перечень работ
+        </span>
+        <h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary uppercase font-bold mt-1">
+          Какие задачи закрываем по направлению «{service.shortName}»
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {service.whatWeDo.map((item) => (
+          <div class="bg-surface p-5 border-2 border-surface-variant">
+            <h3 class="font-headline-sm text-headline-sm uppercase text-primary font-bold">
+              {item.title}
+            </h3>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5">
+              {item.desc}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Форма расчёта и вызова машины -->
+  <section class="w-full py-10" id="service-order">
+    <div class="max-w-7xl mx-auto px-4 md:px-10">
+      <DeliveryCalculator client:load initialMode="service" initialServiceId={service.id} />
+    </div>
+  </section>
+
+  <!-- Другие услуги -->
+  <section class="w-full bg-surface-container-lowest py-8 border-t border-surface-variant">
+    <div class="max-w-7xl mx-auto px-4 md:px-10">
+      <h2 class="font-headline-md text-headline-sm uppercase text-primary font-bold mb-4">
+        Другие услуги компании «Строй Ресурс 21»
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {otherServices.map((os) => (
+          <a
+            href={`/uslugi/${os.slug}`}
+            class="bg-surface p-4 border-2 border-surface-variant hover:border-primary flex items-center justify-between transition-colors"
+          >
+            <div>
+              <h3 class="font-headline-sm text-headline-sm uppercase text-primary font-bold">
+                {os.shortName}
+              </h3>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">
+                от {os.priceFrom.toLocaleString('ru-RU')} ₽/{os.unitLabel}
+              </span>
+            </div>
+            <span class="font-label-technical text-label-technical uppercase text-secondary font-bold">
+              →
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <script>
+    document.querySelectorAll('.tariff-pick').forEach((el) =>
+      el.addEventListener('click', () =>
+        window.dispatchEvent(new CustomEvent('sr21:select-item', { detail: { type: 'service', id: el.getAttribute('data-service-id') } }))
+      )
+    );
+  </script>
+</BaseLayout>
