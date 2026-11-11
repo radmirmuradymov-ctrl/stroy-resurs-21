@@ -25,7 +25,7 @@ const price = basePrice(material);
 ---
 
 <BaseLayout
-  title={`${material.name} с доставкой в Чебоксарах и Чувашии — от ${price.value} ₽/${price.unit} | Строй Ресурс 21`}
+  title={`${material.name} с доставкой в Чебоксарах и Чувашии, от ${price.value} ₽/${price.unit} | Строй Ресурс 21`}
   description={material.fullDescription}
   currentPath={`/materialy/${material.slug}`}
 >
@@ -142,7 +142,7 @@ const price = basePrice(material);
             </div>
             {SITE_CONFIG.isDemoPrices && (
               <span class="font-label-technical text-label-technical bg-secondary-fixed text-on-secondary-fixed px-2.5 py-1 uppercase font-bold">
-                Цены — ориентир
+                Цены ориентировочные
               </span>
             )}
           </div>
@@ -182,8 +182,8 @@ const price = basePrice(material);
             </table>
           </div>
           <p class="mt-3 font-body-sm text-body-sm text-on-surface-variant">
-            * Доставка по Чебоксарам, без грузчиков. Мешок {material.bagWeightKg} кг — {material.pricePerBag} ₽.
-            Нужно больше 15 т или самовывоз с площадки у аэропорта — сумму назовём по телефону.
+            * Доставка по Чебоксарам, без грузчиков. Мешок {material.bagWeightKg} кг: {material.pricePerBag} ₽.
+            Нужно больше 20 т или самовывоз с площадки у аэропорта? Сумму назовём по телефону.
           </p>
           <div class="mt-6 pt-4 border-t border-surface-variant flex flex-wrap items-center justify-between gap-3">
             <a

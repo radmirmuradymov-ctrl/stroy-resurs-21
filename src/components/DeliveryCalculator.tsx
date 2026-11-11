@@ -271,21 +271,21 @@ export default function DeliveryCalculator({
               <optgroup label="Для стройки">
                 {MATERIALS.filter((m) => m.category === 'stroyka').map((m) => (
                   <option key={m.id} value={m.id}>
-                    {m.shortName} — от {basePrice(m).value} ₽/{basePrice(m).unit} ({m.pricePerBag} ₽/мешок)
+                    {m.shortName}: от {basePrice(m).value} ₽/{basePrice(m).unit} ({m.pricePerBag} ₽/мешок)
                   </option>
                 ))}
               </optgroup>
               <optgroup label="Для сада и огорода">
                 {MATERIALS.filter((m) => m.category === 'sad').map((m) => (
                   <option key={m.id} value={m.id}>
-                    {m.shortName} — от {basePrice(m).value} ₽/{basePrice(m).unit} ({m.pricePerBag} ₽/мешок)
+                    {m.shortName}: от {basePrice(m).value} ₽/{basePrice(m).unit} ({m.pricePerBag} ₽/мешок)
                   </option>
                 ))}
               </optgroup>
               <optgroup label="Для печи и бани">
                 {MATERIALS.filter((m) => m.category === 'pech').map((m) => (
                   <option key={m.id} value={m.id}>
-                    {m.shortName} — от {basePrice(m).value} ₽/{basePrice(m).unit} ({m.pricePerBag} ₽/мешок)
+                    {m.shortName}: от {basePrice(m).value} ₽/{basePrice(m).unit} ({m.pricePerBag} ₽/мешок)
                   </option>
                 ))}
               </optgroup>
@@ -410,7 +410,7 @@ export default function DeliveryCalculator({
             >
               {SERVICES.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.name} — от {s.priceFrom.toLocaleString('ru-RU')} ₽/{s.unitLabel}
+                  {s.name}: от {s.priceFrom.toLocaleString('ru-RU')} ₽/{s.unitLabel}
                 </option>
               ))}
             </select>
@@ -564,7 +564,7 @@ export default function DeliveryCalculator({
                   Отправьте нам заявку
                 </h3>
                 <p className="font-body-md text-body-md text-on-surface-variant mt-0.5">
-                  Сайт сам заявку не пересылает. Отправьте текст в WhatsApp, Telegram или ВКонтакте либо позвоните — подтвердим машину, время и сумму.
+                  Сайт сам заявку не пересылает. Отправьте текст в WhatsApp, Telegram или ВКонтакте либо позвоните, и мы подтвердим машину, время и сумму.
                 </p>
               </div>
             </div>
@@ -733,7 +733,7 @@ export default function DeliveryCalculator({
               <span>
                 {!phoneOk
                   ? 'Проверьте телефон: нужно 10 цифр после +7, например +7 960 306-11-97.'
-                  : 'Поставьте галочку согласия на обработку данных — без неё мы не можем принять заявку.'}
+                  : 'Поставьте галочку согласия на обработку данных: без неё мы не можем принять заявку.'}
               </span>
             </div>
           )}

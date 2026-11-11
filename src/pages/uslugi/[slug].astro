@@ -19,7 +19,7 @@ const otherServices = SERVICES.filter((s) => s.id !== service.id);
 ---
 
 <BaseLayout
-  title={`${service.name} в Чебоксарах и Чувашии — от ${service.priceFrom} ₽ | Строй Ресурс 21`}
+  title={`${service.name} в Чебоксарах и Чувашии, от ${service.priceFrom} ₽ | Строй Ресурс 21`}
   description={service.fullDescription}
   currentPath={`/uslugi/${service.slug}`}
 >
@@ -115,7 +115,7 @@ const otherServices = SERVICES.filter((s) => s.id !== service.id);
           <ul class="mt-3 pt-2 border-t border-surface-variant flex flex-col gap-1.5 font-label-technical text-label-technical text-on-surface">
             {service.bullets.map((b) => (
               <li class="flex items-center gap-2">
-                <span class="text-secondary font-bold" aria-hidden="true">—</span>
+                <span class="text-secondary font-bold" aria-hidden="true">•</span>
                 <span>{b}</span>
               </li>
             ))}
@@ -161,7 +161,7 @@ const otherServices = SERVICES.filter((s) => s.id !== service.id);
               <ul class="mt-3 pt-3 border-t border-surface-variant flex flex-col gap-1.5 font-body-sm text-body-sm text-on-surface">
                 {t.features.map((f) => (
                   <li class="flex items-center gap-2">
-                    <span class="text-secondary font-bold" aria-hidden="true">—</span>
+                    <span class="text-secondary font-bold" aria-hidden="true">•</span>
                     <span>{f}</span>
                   </li>
                 ))}
